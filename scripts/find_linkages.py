@@ -40,12 +40,20 @@ def amber_to_sirah(amber_df):
             sirah_df.at[index, 'Atom1'] = "GNac"
 
         elif row['Residue1'] == "4YB" and row['Atom1'] == "C1":
-            sirah_df.at[index, 'Atom2'] = "GO4"
-            sirah_df.at[index, 'Atom1'] = "GNAc"
+            sirah_df.at[index, 'Atom2'] = "G" + sirah_df.at[index, 'Atom2']
+            sirah_df.at[index, 'Atom1'] = "GNac"
+     
         elif row['Residue2'] == "4YB" and row['Atom2'] == "C1":
-            sirah_df.at[index, 'Atom1'] = "GO4"
-            sirah_df.at[index, 'Atom2'] = "GNAc"
+            sirah_df.at[index, 'Atom1'] = "G" + sirah_df.at[index, 'Atom1']
+            sirah_df.at[index, 'Atom2'] = "GNac"
 
+        elif row['Residue2'] == "0SA" and row['Atom2'] == "C2":
+            sirah_df.at[index, 'Atom1'] = "G" + sirah_df.at[index, 'Atom1']
+            sirah_df.at[index, 'Atom2'] = "GC1"
+
+        elif row['Residue1'] == "0SA" and row['Atom1'] == "C2":
+            sirah_df.at[index, 'Atom2'] = "G" + sirah_df.at[index, 'Atom1']
+            sirah_df.at[index, 'Atom1'] = "GC1"
 
         elif row['Atom2'] == "C1" or "C2":
             sirah_df.at[index, 'Atom2'] = "GO2"
@@ -58,7 +66,7 @@ def amber_to_sirah(amber_df):
 
     return sirah_df
 
-def print_sirah_df(sirah_df, protein_str):
+def print_sirah_df(sirah_df, string_prefix):
     """
     Convert the given DataFrame from AMBER format to SIRAH format based on specific conditions.
 
@@ -69,14 +77,14 @@ def print_sirah_df(sirah_df, protein_str):
     - pd.DataFrame: Modified DataFrame.
     """
     for index, row in sirah_df.iterrows():
-        print(f"bond {protein_str}.{row['Res_num1']}.{row['Atom1']} {protein_str}.{row['Res_num2']}.{row['Atom2']}")
+        print(f"bond {string_prefix}.{row['Res_num1']}.{row['Atom1']} {string_prefix}.{row['Res_num2']}.{row['Atom2']}")
 
 # Example usage:
 if __name__ == "__main__":
     pdb_file = sys.argv[1]
-    glycoprot_str = sys.argv[2] if len(sys.argv) > 2 else "glycoprot"  # Default value is "glycoprot"
-    protein_str = sys.argv[3] if len(sys.argv) > 3 else "protein"  # Default value is "protein"
+    string_prefix = sys.argv[2] if len(sys.argv) > 2 else "glycoprot"  # Default value is "glycoprot"
     
     amber_df = read_links_from_glycan(pdb_file)
     sirah_df = amber_to_sirah(amber_df)
-    print_sirah_df(sirah_df, protein_str)
+    print_sirah_df(sirah_df, string_prefix)
+
